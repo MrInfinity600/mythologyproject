@@ -1,0 +1,495 @@
+:root {
+  --bg-dark: #0b0e14;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --ares-accent: #f87171;
+  --ares-bg: rgba(248, 113, 113, 0.08);
+  --athena-accent: #fbbf24;
+  --athena-bg: rgba(251, 191, 36, 0.08);
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(248, 113, 113, 0.12), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(251, 191, 36, 0.12), transparent 40%);
+}
+
+/* Top Progress Bar */
+.progress-track {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  z-index: 100;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--ares-accent), var(--athena-accent));
+  transition: width 0.6s var(--ease-cinematic);
+}
+
+/* Stage & Slide Transitions */
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  perspective: 1200px;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2rem 6rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(40px) scale(0.95);
+  filter: blur(8px);
+  transition: 
+    opacity 0.75s var(--ease-cinematic),
+    transform 0.75s var(--ease-cinematic),
+    filter 0.75s var(--ease-cinematic);
+}
+
+.slide.past {
+  transform: translateY(-40px) scale(0.95);
+  filter: blur(8px);
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+.slide-inner {
+  width: 100%;
+  max-width: 1050px;
+}
+
+/* Title Slide Layout */
+.center-layout {
+  text-align: center;
+  max-width: 720px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 1.5rem;
+}
+
+h1, h2 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4.2rem);
+  line-height: 1.1;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--ares-accent), #dc2626);
+  color: #ffffff;
+  border: none;
+  padding: 1rem 2.2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 10px 25px -5px rgba(248, 113, 113, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px -5px rgba(248, 113, 113, 0.6);
+}
+
+/* Topic Slides Layout */
+.topic-header {
+  margin-bottom: 1.8rem;
+}
+
+.topic-num {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.8rem;
+}
+
+/* Cards & Image Containers */
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 1.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0;
+  transform: translateY(25px);
+  transition: 
+    opacity 0.6s var(--ease-cinematic),
+    transform 0.6s var(--ease-cinematic),
+    border-color 0.3s ease;
+}
+
+.card-img {
+  width: 100%;
+  height: 175px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.card:hover .card-img img {
+  transform: scale(1.05);
+}
+
+.slide.active .card.ares {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.15s;
+}
+
+.slide.active .card.athena {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+.card.ares:hover {
+  border-color: rgba(248, 113, 113, 0.5);
+  background: var(--ares-bg);
+}
+
+.card.athena:hover {
+  border-color: rgba(251, 191, 36, 0.5);
+  background: var(--athena-bg);
+}
+
+.god-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 8px;
+  margin-bottom: 0.9rem;
+}
+
+.ares .god-tag {
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--ares-accent);
+}
+
+.athena .god-tag {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--athena-accent);
+}
+
+.card h3 {
+  font-size: 1.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.card p {
+  color: var(--text-muted);
+  line-height: 1.65;
+  font-size: 0.98rem;
+}
+
+/* Floating Navigation Dock */
+.nav-dock {
+  position: fixed;
+  bottom: 1.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  padding: 0.65rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.dots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  width: 24px;
+  border-radius: 999px;
+  background: var(--text-main);
+}
+
+/* Responsive Mobile Layout */
+@media (max-width: 768px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .card {
+    padding: 1.4rem;
+  }
+  .card-img {
+    height: 140px;
+  }
+  .slide {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding-top: 3rem;
+  }
+}
+/* =========================================
+   STAGE & MULTI-STYLE SLIDE TRANSITIONS
+   ========================================= */
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  perspective: 1400px;
+  overflow: hidden;
+}
+
+/* Base Slide Styling */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2rem 6rem;
+  opacity: 0;
+  pointer-events: none;
+  filter: blur(10px);
+  will-change: transform, opacity, filter;
+  transition: 
+    opacity 0.85s var(--ease-cinematic),
+    transform 0.85s var(--ease-cinematic),
+    filter 0.85s var(--ease-cinematic);
+}
+
+/* 1. Intro Slide: Dramatic Zoom Out */
+.slide[data-theme="intro"] {
+  transform: scale(1.08);
+}
+.slide[data-theme="intro"].past {
+  transform: scale(0.92);
+}
+
+/* 2. Origins: Horizontal Glide (Right to Left) */
+.slide[data-theme="origins"] {
+  transform: translateX(80px);
+}
+.slide[data-theme="origins"].past {
+  transform: translateX(-80px);
+}
+
+/* 3. Domains: Vertical Ascent */
+.slide[data-theme="domains"] {
+  transform: translateY(70px);
+}
+.slide[data-theme="domains"].past {
+  transform: translateY(-70px);
+}
+
+/* 4. Symbols: 3D Perspective Swing */
+.slide[data-theme="symbols"] {
+  transform: rotateY(14deg) translateX(50px) scale(0.96);
+}
+.slide[data-theme="symbols"].past {
+  transform: rotateY(-14deg) translateX(-50px) scale(0.96);
+}
+
+/* 5. Battles: Deep Focus Zoom-In */
+.slide[data-theme="battles"] {
+  transform: scale(0.86);
+}
+.slide[data-theme="battles"].past {
+  transform: scale(1.1);
+}
+
+/* 6. Humanity: Reverse Horizontal Glide (Left to Right) */
+.slide[data-theme="humanity"] {
+  transform: translateX(-80px);
+}
+.slide[data-theme="humanity"].past {
+  transform: translateX(80px);
+}
+
+/* 7. Legacy: Grand Finale Slow Rise */
+.slide[data-theme="legacy"] {
+  transform: translateY(45px) scale(0.97);
+  transition-duration: 1.05s;
+}
+
+/* Active State (Resets any slide cleanly to center) */
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0) scale(1) rotateY(0deg);
+  filter: blur(0);
+}
+/* Smooth Topic Header Entrance */
+.topic-header {
+  margin-bottom: 1.8rem;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: 
+    opacity 0.65s var(--ease-cinematic),
+    transform 0.65s var(--ease-cinematic);
+}
+
+.slide.active .topic-header {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+/* =========================================
+   IMAGE PORTAL ZOOM TRANSITION
+   ========================================= */
+
+/* Outgoing Slide: Dives deep into the left card's image */
+.slide[data-portal="out"] {
+  transform-origin: 28% 36%;
+}
+
+.slide[data-portal="out"].past {
+  opacity: 0;
+  transform: scale(3.4);
+  filter: blur(2px);
+  z-index: 5;
+  transition:
+    transform 0.95s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.7s ease-in 0.25s,
+    filter 0.8s ease;
+}
+
+/* Incoming Slide: Emerges from inside that exact same image */
+.slide[data-portal="in"] {
+  transform-origin: 28% 36%;
+  opacity: 0;
+  transform: scale(2.8);
+  filter: blur(4px);
+}
+
+.slide[data-portal="in"].active {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+  transition:
+    transform 0.95s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.6s ease-out,
+    filter 0.75s ease-out;
+}
+
+/* Keep the shared card visible immediately during the portal pull-back */
+.slide[data-portal="in"].active .card.ares {
+  transition-delay: 0s;
+}
+
+/* Adjust focal point for stacked mobile screens */
+@media (max-width: 768px) {
+  .slide[data-portal="out"],
+  .slide[data-portal="in"] {
+    transform-origin: 50% 28%;
+  }
+}
