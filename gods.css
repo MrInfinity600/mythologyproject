@@ -1,12 +1,16 @@
 :root {
-  --bg-dark: #0b0e14;
+  --bg-dark: #07090e;
+  --surface: rgba(15, 20, 32, 0.55);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --ares-accent: #f87171;
+  --ares-deep: #dc2626;
   --ares-bg: rgba(248, 113, 113, 0.08);
   --athena-accent: #fbbf24;
+  --athena-deep: #d97706;
   --athena-bg: rgba(251, 191, 36, 0.08);
   --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 * {
@@ -15,16 +19,35 @@
   padding: 0;
 }
 
-body {
+html, body {
+  height: 100%;
   background-color: var(--bg-dark);
   color: var(--text-main);
   font-family: 'Plus Jakarta Sans', sans-serif;
-  height: 100vh;
   overflow: hidden;
-  user-select: none;
-  background-image: 
-    radial-gradient(circle at 15% 20%, rgba(248, 113, 113, 0.12), transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(251, 191, 36, 0.12), transparent 40%);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ambient Particle Canvas */
+#ambientCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Dynamic Background Glow */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 25%, rgba(248, 113, 113, 0.14), transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.14), transparent 45%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Top Progress Bar */
@@ -34,76 +57,148 @@ body {
   left: 0;
   width: 100%;
   height: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  z-index: 100;
+  background: rgba(255, 255, 255, 0.06);
+  z-index: 120;
 }
 
 .progress-fill {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, var(--ares-accent), var(--athena-accent));
-  transition: width 0.6s var(--ease-cinematic);
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.5);
+  transition: width 0.5s var(--ease-cinematic);
 }
 
-/* Stage & Slide Transitions */
+/* Vertical Side Counter */
+.side-rail {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  z-index: 90;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.rail-current {
+  color: var(--text-main);
+  font-weight: 800;
+}
+
+.rail-line {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, var(--ares-accent), var(--athena-accent));
+  opacity: 0.5;
+}
+
+/* =========================================
+   SCROLL-SNAP STAGE (Scroll + Click Hybrid)
+   ========================================= */
 .stage {
   position: relative;
+  z-index: 1;
   width: 100%;
   height: 100vh;
-  perspective: 1200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  perspective: 1400px;
+}
+
+/* Hide default scrollbar for sleek presentation feel */
+.stage::-webkit-scrollbar {
+  width: 6px;
+}
+.stage::-webkit-scrollbar-track {
+  background: transparent;
+}
+.stage::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
 }
 
 .slide {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 2rem 6rem;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(40px) scale(0.95);
-  filter: blur(8px);
-  transition: 
-    opacity 0.75s var(--ease-cinematic),
-    transform 0.75s var(--ease-cinematic),
-    filter 0.75s var(--ease-cinematic);
-}
-
-.slide.past {
-  transform: translateY(-40px) scale(0.95);
-  filter: blur(8px);
-}
-
-.slide.active {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+  padding: 3.5rem 2.5rem 6.5rem;
+  will-change: transform, opacity, filter;
 }
 
 .slide-inner {
   width: 100%;
-  max-width: 1050px;
+  max-width: 1120px;
+  /* Out-of-view state for smooth in/out transitions */
+  opacity: 0.12;
+  filter: blur(8px);
+  transform: translateY(45px) scale(0.95);
+  transition:
+    opacity 0.8s var(--ease-cinematic),
+    transform 0.85s var(--ease-cinematic),
+    filter 0.8s var(--ease-cinematic);
 }
 
-/* Title Slide Layout */
-.center-layout {
-  text-align: center;
-  max-width: 720px;
+/* Slides that have already been scrolled past */
+.slide.past .slide-inner {
+  transform: translateY(-45px) scale(0.95);
+}
+
+/* Unique Entrance Geometries per Theme */
+.slide[data-theme="origins"] .slide-inner { transform: translateX(65px) scale(0.96); }
+.slide[data-theme="origins"].past .slide-inner { transform: translateX(-65px) scale(0.96); }
+
+.slide[data-theme="symbols"] .slide-inner { transform: rotateY(10deg) scale(0.95); }
+.slide[data-theme="symbols"].past .slide-inner { transform: rotateY(-10deg) scale(0.95); }
+
+.slide[data-theme="battles"] .slide-inner { transform: scale(0.88); }
+.slide[data-theme="battles"].past .slide-inner { transform: scale(1.06); }
+
+.slide[data-theme="humanity"] .slide-inner { transform: translateX(-65px) scale(0.96); }
+.slide[data-theme="humanity"].past .slide-inner { transform: translateX(65px) scale(0.96); }
+
+/* Active Slide Resets Cleanly */
+.slide.active .slide-inner {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0, 0, 0) scale(1) rotateY(0deg);
+}
+
+/* =========================================
+   SLIDE 1: OFF-CENTER ASYMMETRIC INTRO
+   ========================================= */
+.intro-split {
+  display: grid;
+  grid-template-columns: 1.25fr 0.95fr;
+  align-items: center;
+  gap: 3.5rem;
+  text-align: left;
 }
 
 .badge {
   display: inline-block;
-  padding: 0.4rem 1rem;
+  padding: 0.45rem 1rem;
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--athena-accent);
+  margin-bottom: 1.4rem;
 }
 
 h1, h2 {
@@ -112,55 +207,170 @@ h1, h2 {
 }
 
 h1 {
-  font-size: clamp(2.5rem, 5vw, 4.2rem);
-  line-height: 1.1;
-  margin-bottom: 1.2rem;
-  background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
+  font-size: clamp(2.8rem, 5.5vw, 4.6rem);
+  line-height: 1.05;
+  margin-bottom: 1.3rem;
+  background: linear-gradient(135deg, #ffffff 35%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h1 .amp {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--ares-accent), var(--athena-accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.12rem;
   color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 2.5rem;
+  line-height: 1.7;
+  margin-bottom: 2.3rem;
+  max-width: 540px;
+}
+
+.intro-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  flex-wrap: wrap;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--ares-accent), #dc2626);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: linear-gradient(135deg, var(--ares-accent), var(--ares-deep));
   color: #ffffff;
   border: none;
-  padding: 1rem 2.2rem;
-  font-size: 1rem;
+  padding: 1rem 2rem;
+  font-family: inherit;
+  font-size: 0.98rem;
   font-weight: 700;
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 10px 25px -5px rgba(248, 113, 113, 0.4);
+  box-shadow: 0 12px 28px -6px rgba(248, 113, 113, 0.45);
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px -5px rgba(248, 113, 113, 0.6);
+  box-shadow: 0 18px 36px -6px rgba(248, 113, 113, 0.65);
 }
 
-/* Topic Slides Layout */
+.scroll-hint {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+/* Right-Side Decorative Duel Emblem */
+.duel-emblem {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+
+.emblem-half {
+  padding: 2.2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ares-half {
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.16), transparent 70%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.athena-half {
+  background: linear-gradient(315deg, rgba(251, 191, 36, 0.16), transparent 70%);
+  text-align: right;
+}
+
+.emblem-greek {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  opacity: 0.45;
+}
+
+.ares-half strong {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  color: var(--ares-accent);
+  letter-spacing: 0.12em;
+}
+
+.athena-half strong {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  color: var(--athena-accent);
+  letter-spacing: 0.12em;
+}
+
+.emblem-half small {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.emblem-divider {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--bg-dark);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: grid;
+  place-items: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--text-main);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+/* =========================================
+   TOPIC HEADERS & COMPARISON CARDS
+   ========================================= */
 .topic-header {
   margin-bottom: 1.8rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.65s var(--ease-cinematic), transform 0.65s var(--ease-cinematic);
+}
+
+.slide.active .topic-header {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
 }
 
 .topic-num {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
-  color: var(--text-muted);
-  margin-bottom: 0.4rem;
+  letter-spacing: 0.18em;
+  color: var(--athena-accent);
+  margin-bottom: 0.35rem;
 }
 
 h2 {
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-size: clamp(1.85rem, 3.4vw, 2.75rem);
+  margin-bottom: 0.4rem;
+}
+
+.topic-desc {
+  color: var(--text-muted);
+  font-size: 1rem;
 }
 
 .comparison-grid {
@@ -169,27 +379,71 @@ h2 {
   gap: 1.8rem;
 }
 
-/* Cards & Image Containers */
+/* 3D Tilt Glassmorphic Cards */
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  border-radius: 20px;
-  padding: 1.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  border-radius: 22px;
+  padding: 1.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  overflow: hidden;
   opacity: 0;
-  transform: translateY(25px);
-  transition: 
-    opacity 0.6s var(--ease-cinematic),
-    transform 0.6s var(--ease-cinematic),
-    border-color 0.3s ease;
+  transform: translateY(30px);
+  transform-style: preserve-3d;
+  transition:
+    opacity 0.65s var(--ease-cinematic),
+    transform 0.65s var(--ease-cinematic),
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+
+/* Cursor-tracked radial spotlight inside card */
+.card-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.08),
+    transparent 45%
+  );
+}
+
+.card:hover .card-glow {
+  opacity: 1;
+}
+
+.slide.active .card.ares {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.18s;
+}
+
+.slide.active .card.athena {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.32s;
+}
+
+.card.ares:hover {
+  border-color: rgba(248, 113, 113, 0.55);
+  background: var(--ares-bg);
+}
+
+.card.athena:hover {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: var(--athena-bg);
 }
 
 .card-img {
   width: 100%;
-  height: 175px;
-  border-radius: 12px;
+  height: 165px;
+  border-radius: 14px;
   overflow: hidden;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.15rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -198,83 +452,83 @@ h2 {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
+  transition: transform 0.55s var(--ease-cinematic);
 }
 
 .card:hover .card-img img {
-  transform: scale(1.05);
-}
-
-.slide.active .card.ares {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.15s;
-}
-
-.slide.active .card.athena {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.3s;
-}
-
-.card.ares:hover {
-  border-color: rgba(248, 113, 113, 0.5);
-  background: var(--ares-bg);
-}
-
-.card.athena:hover {
-  border-color: rgba(251, 191, 36, 0.5);
-  background: var(--athena-bg);
+  transform: scale(1.06);
 }
 
 .god-tag {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.35rem 0.85rem;
+  letter-spacing: 0.09em;
+  padding: 0.32rem 0.8rem;
   border-radius: 8px;
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.8rem;
 }
 
 .ares .god-tag {
-  background: rgba(248, 113, 113, 0.15);
+  background: rgba(248, 113, 113, 0.16);
   color: var(--ares-accent);
 }
 
 .athena .god-tag {
-  background: rgba(251, 191, 36, 0.15);
+  background: rgba(251, 191, 36, 0.16);
   color: var(--athena-accent);
 }
 
 .card h3 {
-  font-size: 1.35rem;
-  margin-bottom: 0.65rem;
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  margin-bottom: 0.55rem;
 }
 
 .card p {
   color: var(--text-muted);
-  line-height: 1.65;
-  font-size: 0.98rem;
+  line-height: 1.62;
+  font-size: 0.95rem;
+  margin-bottom: 1.1rem;
 }
 
-/* Floating Navigation Dock */
+/* Metadata Trait Footer inside Cards */
+.trait-list {
+  list-style: none;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.84rem;
+  color: var(--text-main);
+}
+
+.trait-list span {
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-right: 0.35rem;
+}
+
+/* =========================================
+   FLOATING NAVIGATION DOCK
+   ========================================= */
 .nav-dock {
   position: fixed;
-  bottom: 1.8rem;
+  bottom: 1.6rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  padding: 0.65rem 1.2rem;
+  gap: 1rem;
+  background: rgba(11, 15, 25, 0.82);
+  backdrop-filter: blur(18px);
+  padding: 0.6rem 1.1rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  z-index: 100;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+  z-index: 110;
 }
 
 .nav-btn {
@@ -283,7 +537,7 @@ h2 {
   color: var(--text-main);
   font-family: inherit;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   padding: 0.45rem 0.9rem;
   border-radius: 999px;
   cursor: pointer;
@@ -301,195 +555,191 @@ h2 {
 
 .dots {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .dot {
+  position: relative;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.25);
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.35s var(--ease-spring);
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .dot.active {
-  width: 24px;
+  width: 26px;
   border-radius: 999px;
-  background: var(--text-main);
+  background: linear-gradient(90deg, var(--ares-accent), var(--athena-accent));
 }
 
-/* Responsive Mobile Layout */
+/* Tooltip on dot hover */
+.dot::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dot:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =========================================
+   RESPONSIVE LAYOUT
+   ========================================= */
+@media (max-width: 900px) {
+  .intro-split {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .side-rail {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   .comparison-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  .card {
-    padding: 1.4rem;
-  }
-  .card-img {
-    height: 140px;
+    gap: 1.1rem;
   }
   .slide {
+    padding: 2.5rem 1.25rem 6rem;
     align-items: flex-start;
-    overflow-y: auto;
-    padding-top: 3rem;
+  }
+  .card {
+    padding: 1.25rem;
+  }
+  .card-img {
+    height: 130px;
   }
 }
 /* =========================================
-   STAGE & MULTI-STYLE SLIDE TRANSITIONS
+   SLIDE 8: SOURCES & BIBLIOGRAPHY
    ========================================= */
-.stage {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  perspective: 1400px;
-  overflow: hidden;
+.slide[data-theme="sources"] .slide-inner {
+  transform: translateY(50px) scale(0.96);
 }
 
-/* Base Slide Styling */
-.slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 2rem 6rem;
+.sources-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.8rem;
+  margin-bottom: 2rem;
+}
+
+.source-box {
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: 1.8rem;
   opacity: 0;
-  pointer-events: none;
-  filter: blur(10px);
-  will-change: transform, opacity, filter;
-  transition: 
-    opacity 0.85s var(--ease-cinematic),
-    transform 0.85s var(--ease-cinematic),
-    filter 0.85s var(--ease-cinematic);
-}
-
-/* 1. Intro Slide: Dramatic Zoom Out */
-.slide[data-theme="intro"] {
-  transform: scale(1.08);
-}
-.slide[data-theme="intro"].past {
-  transform: scale(0.92);
-}
-
-/* 2. Origins: Horizontal Glide (Right to Left) */
-.slide[data-theme="origins"] {
-  transform: translateX(80px);
-}
-.slide[data-theme="origins"].past {
-  transform: translateX(-80px);
-}
-
-/* 3. Domains: Vertical Ascent */
-.slide[data-theme="domains"] {
-  transform: translateY(70px);
-}
-.slide[data-theme="domains"].past {
-  transform: translateY(-70px);
-}
-
-/* 4. Symbols: 3D Perspective Swing */
-.slide[data-theme="symbols"] {
-  transform: rotateY(14deg) translateX(50px) scale(0.96);
-}
-.slide[data-theme="symbols"].past {
-  transform: rotateY(-14deg) translateX(-50px) scale(0.96);
-}
-
-/* 5. Battles: Deep Focus Zoom-In */
-.slide[data-theme="battles"] {
-  transform: scale(0.86);
-}
-.slide[data-theme="battles"].past {
-  transform: scale(1.1);
-}
-
-/* 6. Humanity: Reverse Horizontal Glide (Left to Right) */
-.slide[data-theme="humanity"] {
-  transform: translateX(-80px);
-}
-.slide[data-theme="humanity"].past {
-  transform: translateX(80px);
-}
-
-/* 7. Legacy: Grand Finale Slow Rise */
-.slide[data-theme="legacy"] {
-  transform: translateY(45px) scale(0.97);
-  transition-duration: 1.05s;
-}
-
-/* Active State (Resets any slide cleanly to center) */
-.slide.active {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translate3d(0, 0, 0) scale(1) rotateY(0deg);
-  filter: blur(0);
-}
-/* Smooth Topic Header Entrance */
-.topic-header {
-  margin-bottom: 1.8rem;
-  opacity: 0;
-  transform: translateY(18px);
-  transition: 
+  transform: translateY(25px);
+  transition:
     opacity 0.65s var(--ease-cinematic),
-    transform 0.65s var(--ease-cinematic);
+    transform 0.65s var(--ease-cinematic),
+    border-color 0.3s ease;
 }
 
-.slide.active .topic-header {
+.slide.active .source-box:first-child {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 0.1s;
-}
-/* =========================================
-   IMAGE PORTAL ZOOM TRANSITION
-   ========================================= */
-
-/* Outgoing Slide: Dives deep into the left card's image */
-.slide[data-portal="out"] {
-  transform-origin: 28% 36%;
+  transition-delay: 0.18s;
 }
 
-.slide[data-portal="out"].past {
-  opacity: 0;
-  transform: scale(3.4);
-  filter: blur(2px);
-  z-index: 5;
-  transition:
-    transform 0.95s cubic-bezier(0.65, 0, 0.35, 1),
-    opacity 0.7s ease-in 0.25s,
-    filter 0.8s ease;
-}
-
-/* Incoming Slide: Emerges from inside that exact same image */
-.slide[data-portal="in"] {
-  transform-origin: 28% 36%;
-  opacity: 0;
-  transform: scale(2.8);
-  filter: blur(4px);
-}
-
-.slide[data-portal="in"].active {
+.slide.active .source-box:last-child {
   opacity: 1;
-  transform: scale(1);
-  filter: blur(0);
-  transition:
-    transform 0.95s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.6s ease-out,
-    filter 0.75s ease-out;
+  transform: translateY(0);
+  transition-delay: 0.32s;
 }
 
-/* Keep the shared card visible immediately during the portal pull-back */
-.slide[data-portal="in"].active .card.ares {
-  transition-delay: 0s;
+.source-box:hover {
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
-/* Adjust focal point for stacked mobile screens */
+.source-box .god-tag {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  margin-bottom: 1.2rem;
+}
+
+.source-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.source-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.source-list li:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.source-list strong {
+  font-size: 0.96rem;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.source-list em {
+  color: var(--athena-accent);
+  font-style: italic;
+}
+
+.source-list span {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.sources-footer {
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.6s var(--ease-cinematic) 0.45s, transform 0.6s var(--ease-cinematic) 0.45s;
+}
+
+.slide.active .sources-footer {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (max-width: 768px) {
-  .slide[data-portal="out"],
-  .slide[data-portal="in"] {
-    transform-origin: 50% 28%;
+  .sources-grid {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+  .sources-footer {
+    justify-content: center;
   }
 }
