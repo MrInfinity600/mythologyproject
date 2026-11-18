@@ -3,207 +3,403 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gods of War & Wisdom: Ares vs. Athena</title>
+  <title>Ares vs. Athena — Two Faces of War</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="gods.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Top Progress Line -->
+  <!-- Ambient Particle Canvas -->
+  <canvas id="ambientCanvas"></canvas>
+
+  <!-- Top Progress Bar -->
   <div class="progress-track">
     <div class="progress-fill" id="progressFill"></div>
   </div>
 
-  <!-- Main Presentation Stage -->
+  <!-- Vertical Side Rail Indicator -->
+  <aside class="side-rail" aria-label="Slide Progress">
+    <span class="rail-current" id="railCurrent">01</span>
+    <div class="rail-line"></div>
+    <span class="rail-total" id="railTotal">07</span>
+  </aside>
+
+  <!-- Main Scrollable Stage -->
   <main class="stage" id="stage">
 
-    <!-- Slide 0: Title -->
-    <section class="slide active" data-theme="intro">
-      <div class="slide-inner center-layout">
-        <span class="badge">Made by Diego, Leslie, Advril</span>
-        <h1>Mythology Gods</h1>
-        <p class="subtitle">Exploring <strong>Ares</strong> and <strong>Athena</strong></p>
-        <button class="btn-primary" onclick="nextSlide()">Begin Journey →</button>
-      </div>
-    </section>
-
-<!-- Slide 1: Zooms INTO the left card image -->
-<section class="slide" data-theme="origins" data-portal="out">
-  <div class="slide-inner">
-    <div class="topic-header">
-      <span class="topic-num">01 / 06</span>
-      <h2>Origins & Creation</h2>
-    </div>
-    <div class="comparison-grid">
-      <div class="card ares">
-        <div class="card-img">
-          <!-- Shared Image -->
-          <img src="bbyares.jpeg" alt="Ares">
-        </div>
-        <div class="god-tag">⚔️ Ares</div>
-        <h3>Son of Zeus & Hera</h3>
-        <p>Born of Olympus, representing the raw, untamed fury of battle.</p>
-      </div>
-      <div class="card athena">
-        <div class="card-img">
-          <img src="bbyathena.jpeg" alt="Athena">
-        </div>
-        <div class="god-tag">🦉 Athena</div>
-        <h3>Born in Full Armor</h3>
-        <p>Sprang fully grown from Zeus's forehead, embodying wisdom.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Slide 2: Zooms OUT FROM that exact same left card image -->
-<section class="slide" data-theme="domains" data-portal="in">
-  <div class="slide-inner">
-    <div class="topic-header">
-      <span class="topic-num">02 / 06</span>
-      <h2>Domains & Cosmic Powers</h2>
-    </div>
-    <div class="comparison-grid">
-      <div class="card ares">
-        <div class="card-img">
-          <!-- Same Shared Image -->
-          <img src="aresbloodlust2.webp" alt="Ares">
-        </div>
-        <div class="god-tag">⚔️ Ares</div>
-        <h3>Bloodlust & Courage</h3>
-        <p>Commands physical valor, chaos, and the heat of close combat.</p>
-      </div>
-      <div class="card athena">
-        <div class="card-img">
-          <img src="Athena.webp" alt="Athena">
-        </div>
-        <div class="god-tag">🦉 Athena</div>
-        <h3>Strategy & Craft</h3>
-        <p>Governs tactical warfare, civilization, and strategic defense.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-    <!-- Slide 3: Symbols & Iconography -->
-    <section class="slide" data-theme="symbols">
-      <div class="slide-inner">
-        <div class="topic-header">
-          <span class="topic-num">03 / 06</span>
-          <h2>Sacred Symbols & Form</h2>
-        </div>
-        <div class="comparison-grid">
-          <div class="card ares">
-            <div class="card-img">
-              <img src="ares.jpeg" alt="Ares Symbols">
-            </div>
-            <div class="god-tag">⚔️ Ares</div>
-            <h3>Heading Here</h3>
-            <p>Add your description about Ares's symbols here.</p>
+    <!-- SLIDE 1: INTRO (Asymmetric Split Layout) -->
+    <section class="slide active" data-theme="intro" data-title="Intro">
+      <div class="slide-inner intro-split">
+        <div class="intro-content">
+          <span class="badge">Olympian Rivalry • Greek Mythology</span>
+          <h1>Ares <span class="amp">&amp;</span> Athena</h1>
+          <p class="subtitle">
+            Both are children of Zeus, and both rule the battlefield—yet they represent opposite truths about human conflict: raw, untamed bloodlust versus cold, calculated strategy.
+          </p>
+          <div class="intro-actions">
+            <button class="btn-primary magnetic" onclick="goToSlide(1)">
+              Enter the Arena
+              <span class="arrow">↓</span>
+            </button>
+            <span class="scroll-hint">or scroll down to explore</span>
           </div>
-          <div class="card athena">
-            <div class="card-img">
-              <img src="athena.jpeg" alt="Athena Symbols">
+        </div>
+
+        <!-- Off-Center Visual Relic Panel -->
+        <div class="intro-visual">
+          <div class="duel-emblem">
+            <div class="emblem-half ares-half">
+              <span class="emblem-greek">Ἄρης</span>
+              <strong>ARÈS</strong>
+              <small>Fury • Courage • Chaos</small>
             </div>
-            <div class="god-tag">🦉 Athena</div>
-            <h3>Heading Here</h3>
-            <p>Add your description about Athena's symbols here.</p>
+            <div class="emblem-divider">VS</div>
+            <div class="emblem-half athena-half">
+              <span class="emblem-greek">Ἀθηνᾶ</span>
+              <strong>ATHENA</strong>
+              <small>Wisdom • Tactics • Law</small>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Slide 4: Great Battles & Challenges -->
-    <section class="slide" data-theme="battles">
+    <!-- SLIDE 2: ORIGINS -->
+    <section class="slide" data-theme="origins" data-title="Origins">
       <div class="slide-inner">
-        <div class="topic-header">
-          <span class="topic-num">04 / 06</span>
-          <h2>Greatest Battles & Adversaries</h2>
-        </div>
+        <header class="topic-header">
+          <span class="topic-num">01 / DIVINE LINEAGE</span>
+          <h2>Origins &amp; Birthright</h2>
+          <p class="topic-desc">How they entered Olympus shaped the temperament they brought to every war.</p>
+        </header>
+
         <div class="comparison-grid">
-          <div class="card ares">
+          <article class="card ares tilt-card">
+            <div class="card-glow"></div>
             <div class="card-img">
-              <img src="ares2.webp" alt="Ares Battles">
+              <img src="https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=800&q=80" alt="Fiery bronze armor and storm clouds" />
             </div>
-            <div class="god-tag">⚔️ Ares</div>
-            <h3>Heading Here</h3>
-            <p>Add your description about Ares's battles here.</p>
-          </div>
-          <div class="card athena">
+            <span class="god-tag">Ares • Son of Zeus &amp; Hera</span>
+            <h3>Born of Royal Friction</h3>
+            <p>
+              As the legitimate son of Zeus and Hera, Ares inherited the volatile temper of their rocky marriage. Despised even by his own father for his insatiable thirst for violence, Ares thrived in the untamed wilds of Thrace.
+            </p>
+            <ul class="trait-list">
+              <li><span>Parentage:</span> Zeus &amp; Hera</li>
+              <li><span>Homeland:</span> Rugged Thrace</li>
+            </ul>
+          </article>
+
+          <article class="card athena tilt-card">
+            <div class="card-glow"></div>
             <div class="card-img">
-              <img src="athena2.jpeg" alt="Athena Battles">
+              <img src="https://images.unsplash.com/photo-1564399580075-5dfe19c205f3?auto=format&fit=crop&w=800&q=80" alt="Classical marble sculpture in golden light" />
             </div>
-            <div class="god-tag">🦉 Athena</div>
-            <h3>Heading Here</h3>
-            <p>Add your description about Athena's battles here.</p>
-          </div>
+            <span class="god-tag">Athena • Born from Mind</span>
+            <h3>Sprung Fully Armored</h3>
+            <p>
+              After swallowing the Titaness Metis, Zeus suffered a splitting headache until Hephaestus cleaved his skull open. Athena emerged fully grown, clad in gleaming golden armor, letting out a war cry that shook heaven and earth.
+            </p>
+            <ul class="trait-list">
+              <li><span>Parentage:</span> Zeus &amp; Metis (Wisdom)</li>
+              <li><span>Patron City:</span> Athens</li>
+            </ul>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- Slide 5: Relationship with Humanity -->
-    <section class="slide" data-theme="humanity">
+    <!-- SLIDE 3: DOMAINS -->
+    <section class="slide" data-theme="domains" data-title="Domains">
       <div class="slide-inner">
-        <div class="topic-header">
-          <span class="topic-num">05 / 06</span>
-          <h2>Relationship with Humanity</h2>
-        </div>
+        <header class="topic-header">
+          <span class="topic-num">02 / SPHERES OF POWER</span>
+          <h2>Domains of Warfare</h2>
+          <p class="topic-desc">One commands the adrenaline of the front line; the other commands the map room.</p>
+        </header>
+
         <div class="comparison-grid">
-          <div class="card ares">
+          <article class="card ares tilt-card">
+            <div class="card-glow"></div>
             <div class="card-img">
-              <img src="ares3.jpeg" alt="Ares Humanity">
+              <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80" alt="Dramatic red embers and dark steel" />
             </div>
-            <div class="god-tag">⚔️ Ares</div>
-            <h3>Heading Here</h3>
-            <p>Add your description about Ares and humanity here.</p>
-          </div>
-          <div class="card athena">
+            <span class="god-tag">Ares • The Visceral Clash</span>
+            <h3>Brute Force &amp; Bloodlust</h3>
+            <p>
+              Ares embodies the sheer physical terror of combat—the clash of bronze shields, reckless bravery, and civil disorder. He doesn't care who wins or why; he cares only for the heat and roar of the fight itself.
+            </p>
+            <ul class="trait-list">
+              <li><span>Allies:</span> Phobos (Fear) &amp; Deimos (Terror)</li>
+              <li><span>Style:</span> Head-on berserker charge</li>
+            </ul>
+          </article>
+
+          <article class="card athena tilt-card">
+            <div class="card-glow"></div>
             <div class="card-img">
-              <img src="athena3.jpeg" alt="Athena Humanity">
+              <img src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=800&q=80" alt="Strategic chess pieces in warm lighting" />
             </div>
-            <div class="god-tag">🦉 Athena</div>
-            <h3>Heading Here</h3>
-            <p>Add your description about Athena and humanity here.</p>
-          </div>
+            <span class="god-tag">Athena • The Grand Design</span>
+            <h3>Strategy, Craft &amp; Justice</h3>
+            <p>
+              Athena governs disciplined military tactics, defensive fortifications, and righteous wars fought to protect civilization. Beyond battle, she is the master of weaving, architecture, law, and heroic mentorship.
+            </p>
+            <ul class="trait-list">
+              <li><span>Allies:</span> Nike (Victory)</li>
+              <li><span>Style:</span> Flanking, intellect &amp; discipline</li>
+            </ul>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- Slide 6: Cultural Legacy -->
-    <section class="slide" data-theme="legacy">
+    <!-- SLIDE 4: SYMBOLS -->
+    <section class="slide" data-theme="symbols" data-title="Symbols">
       <div class="slide-inner">
-        <div class="topic-header">
-          <span class="topic-num">06 / 06</span>
-          <h2>Enduring Cultural Legacy</h2>
-        </div>
+        <header class="topic-header">
+          <span class="topic-num">03 / SACRED ICONOGRAPHY</span>
+          <h2>Weapons &amp; Sacred Symbols</h2>
+          <p class="topic-desc">The relics and creatures tied to their names tell the story of how Greeks viewed them.</p>
+        </header>
+
         <div class="comparison-grid">
-          <div class="card ares">
+          <article class="card ares tilt-card">
+            <div class="card-glow"></div>
             <div class="card-img">
-              <img src="ares4.jpg" alt="Ares Legacy">
+              <img src="https://images.unsplash.com/photo-1589656966895-2f33e7653819?auto=format&fit=crop&w=800&q=80" alt="Fierce predator gaze in shadow" />
             </div>
-            <div class="god-tag">⚔️ Ares</div>
-            <h3>Heading Here</h3>
-            <p>Add your description about Ares's legacy here.</p>
-          </div>
-          <div class="card athena">
+            <span class="god-tag">Ares • Relics of Carnage</span>
+            <h3>Bronze Spear, Vulture &amp; Boar</h3>
+            <p>
+              Armed with a blood-stained spear and a fire-breathing chariot drawn by four immortal steeds, Ares is accompanied by vultures circling the battlefield and wild boars known for relentless, unyielding aggression.
+            </p>
+            <ul class="trait-list">
+              <li><span>Weapons:</span> Bronze-tipped spear &amp; flaming torch</li>
+              <li><span>Animals:</span> Vulture, venomous serpent, wild boar</li>
+            </ul>
+          </article>
+
+          <article class="card athena tilt-card">
+            <div class="card-glow"></div>
             <div class="card-img">
-              <img src="athena4.jpeg" alt="Athena Legacy">
+              <img src="https://images.unsplash.com/photo-1543549790-8b5f4a028cfb?auto=format&fit=crop&w=800&q=80" alt="Owl with piercing golden eyes" />
             </div>
-            <div class="god-tag">🦉 Athena</div>
-            <h3>Heading Here</h3>
-            <p>Add your description about Athena's legacy here.</p>
+            <span class="god-tag">Athena • Relics of Sovereignty</span>
+            <h3>The Aegis, Owl &amp; Olive Tree</h3>
+            <p>
+              Athena bears the impenetrable Aegis shield embossed with Medusa's gaze to scatter enemies in panic. Her keen-eyed owl sees through darkness, while her gift of the olive tree symbolizes peace and prosperity.
+            </p>
+            <ul class="trait-list">
+              <li><span>Weapons:</span> Aegis shield &amp; golden spear</li>
+              <li><span>Symbols:</span> Little Owl &amp; sacred olive branch</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: BATTLES -->
+    <section class="slide" data-theme="battles" data-title="Battles">
+      <div class="slide-inner">
+        <header class="topic-header">
+          <span class="topic-num">04 / THE TROJAN CLASH</span>
+          <h2>Famous Myths &amp; Battles</h2>
+          <p class="topic-desc">When the two collided outside the walls of Troy, brains defeated brawn every time.</p>
+        </header>
+
+        <div class="comparison-grid">
+          <article class="card ares tilt-card">
+            <div class="card-glow"></div>
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80" alt="Ancient Greek ruins overlooking the sea" />
+            </div>
+            <span class="god-tag">Ares • Defender of Troy</span>
+            <h3>Wounded by Mortal Steel</h3>
+            <p>
+              Fighting alongside Hector and the Trojans, Ares charged blindly into the fray—only for Athena to guide the mortal hero Diomedes' spear straight into Ares' gut. Ares fled back to Olympus roaring like ten thousand men.
+            </p>
+            <ul class="trait-list">
+              <li><span>Allegiance:</span> Trojans &amp; Hector</li>
+              <li><span>Outcome:</span> Outmaneuvered &amp; humiliated</li>
+            </ul>
+          </article>
+
+          <article class="card athena tilt-card">
+            <div class="card-glow"></div>
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=800&q=80" alt="Ancient stone columns under dramatic sky" />
+            </div>
+            <span class="god-tag">Athena • Architect of Victory</span>
+            <h3>The Trojan Horse &amp; Heroes</h3>
+            <p>
+              Backing the Greeks, Athena knocked Ares out cold with a massive boundary stone and later inspired Odysseus to build the Trojan Horse—ending a ten-year siege with a single stroke of psychological genius.
+            </p>
+            <ul class="trait-list">
+              <li><span>Champions:</span> Odysseus, Perseus &amp; Heracles</li>
+              <li><span>Outcome:</span> Decisive strategic triumph</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: HUMANITY -->
+    <section class="slide" data-theme="humanity" data-title="Humanity">
+      <div class="slide-inner">
+        <header class="topic-header">
+          <span class="topic-num">05 / MORTAL WORSHIP</span>
+          <h2>How Mortals Viewed Them</h2>
+          <p class="topic-desc">Ancient Greeks feared one as a necessary evil and built civilization around the other.</p>
+        </header>
+
+        <div class="comparison-grid">
+          <article class="card ares tilt-card">
+            <div class="card-glow"></div>
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?auto=format&fit=crop&w=800&q=80" alt="Dark misty mountain ridges" />
+            </div>
+            <span class="god-tag">Ares • Feared &amp; Appeased</span>
+            <h3>Few Temples, Fierce Prayers</h3>
+            <p>
+              Most Greek city-states avoided building temples to Ares inside their walls, fearing it would invite civil bloodshed. Only warriors before battle—and the fierce Spartans—invoked him for raw, fearless stamina.
+            </p>
+            <ul class="trait-list">
+              <li><span>Worship:</span> Before battle &amp; in Sparta</li>
+              <li><span>Reputation:</span> Necessary chaos of war</li>
+            </ul>
+          </article>
+
+          <article class="card athena tilt-card">
+            <div class="card-glow"></div>
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1555993539-1732b0258235?auto=format&fit=crop&w=800&q=80" alt="The Parthenon on the Acropolis in Athens" />
+            </div>
+            <span class="god-tag">Athena • Revered Protector</span>
+            <h3>Crowned on the Acropolis</h3>
+            <p>
+              Revered as the guardian of democracy, civic courts, and craftsmanship, Athena was honored with the Parthenon and the grand Panathenaic Games. Citizens prayed to her for wisdom in both peace and crisis.
+            </p>
+            <ul class="trait-list">
+              <li><span>Monument:</span> The Parthenon, Athens</li>
+              <li><span>Reputation:</span> Pillar of Greek civilization</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: LEGACY -->
+    <section class="slide" data-theme="legacy" data-title="Legacy">
+      <div class="slide-inner">
+        <header class="topic-header">
+          <span class="topic-num">06 / ENDURING IMPACT</span>
+          <h2>Their Legacy Today</h2>
+          <p class="topic-desc">Millennia later, both archetypes still shape our language, politics, and stories.</p>
+        </header>
+
+        <div class="comparison-grid">
+          <article class="card ares tilt-card">
+            <div class="card-glow"></div>
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&w=800&q=80" alt="Red planet Mars in deep space" />
+            </div>
+            <span class="god-tag">Ares • Mars &amp; Modern Pop Culture</span>
+            <h3>The Red Planet &amp; Action Hero</h3>
+            <p>
+              Reborn in Rome as Mars—where he became a far more respected father of Rome—his name lives on in the month of March, the planet Mars, and every story exploring the primal fury of human conflict.
+            </p>
+            <ul class="trait-list">
+              <li><span>Roman Name:</span> Mars</li>
+              <li><span>Modern Echo:</span> Planet Mars, March, martial arts</li>
+            </ul>
+          </article>
+
+          <article class="card athena tilt-card">
+            <div class="card-glow"></div>
+            <div class="card-img">
+              <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800&q=80" alt="Grand library architecture with warm light" />
+            </div>
+            <span class="god-tag">Athena • Minerva &amp; Enlightenment</span>
+            <h3>Emblem of Wisdom &amp; Justice</h3>
+            <p>
+              Known to the Romans as Minerva, Athena remains the universal symbol of universities, supreme courts, strategic leadership, and the enduring idea that intellect must always guide strength.
+            </p>
+            <ul class="trait-list">
+              <li><span>Roman Name:</span> Minerva</li>
+              <li><span>Modern Echo:</span> Universities, courts &amp; civic seals</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+    
+    <!-- SLIDE 8: SOURCES & CITATIONS -->
+    <section class="slide" data-theme="sources" data-title="Sources">
+      <div class="slide-inner">
+        <header class="topic-header">
+          <span class="topic-num">07 / BIBLIOGRAPHY &amp; CREDITS</span>
+          <h2>Sources &amp; Further Reading</h2>
+          <p class="topic-desc">Classical texts, historical references, and visual credits used in this presentation.</p>
+        </header>
+
+        <div class="sources-grid">
+          <!-- Column 1: Classical & Historical Texts -->
+          <div class="source-box">
+            <span class="god-tag">Classical &amp; Historical Texts</span>
+            <ul class="source-list">
+              <li>
+                <strong>Homer — <em>The Iliad</em> (Books V &amp; XXI)</strong>
+                <span>Accounts of the Trojan War, Diomedes wounding Ares, and Athena defeating Ares on the battlefield.</span>
+              </li>
+              <li>
+                <strong>Hesiod — <em>Theogony</em> (Lines 886–929)</strong>
+                <span>The birth of Athena from Zeus’s head and the lineage of Ares through Zeus and Hera.</span>
+              </li>
+              <li>
+                <strong>Pseudo-Apollodorus — <em>Bibliotheca</em></strong>
+                <span>Myths detailing the contest between Athena and Poseidon for patronage of Athens.</span>
+              </li>
+            </ul>
           </div>
+
+          <!-- Column 2: Reference & Media Credits -->
+          <div class="source-box">
+            <span class="god-tag">Modern Reference &amp; Visuals</span>
+            <ul class="source-list">
+              <li>
+                <strong>Theoi Greek Mythology Project (theoi.com)</strong>
+                <span>Encyclopedic catalog of Olympian titles, sacred animals, and cult epithets.</span>
+              </li>
+              <li>
+                <strong>World History Encyclopedia</strong>
+                <span>Historical context on the Parthenon, Spartan worship of Ares, and Roman equivalents (Mars &amp; Minerva).</span>
+              </li>
+              <li>
+                <strong>Photography &amp; Visuals — Unsplash</strong>
+                <span>Archival and classical architecture photography licensed under the Unsplash License.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sources-footer">
+          <button class="btn-primary magnetic" onclick="goToSlide(0)">
+            Back to Beginning <span class="arrow">↑</span>
+          </button>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- Floating Glass Navigation Dock -->
-  <nav class="nav-dock">
-    <button class="nav-btn" id="prevBtn" onclick="prevSlide()" aria-label="Previous Slide">← Prev</button>
+  <!-- Floating Navigation Dock -->
+  <nav class="nav-dock" aria-label="Slide Navigation">
+    <button class="nav-btn" id="prevBtn">← Prev</button>
     <div class="dots" id="dotsContainer"></div>
-    <button class="nav-btn" id="nextBtn" onclick="nextSlide()" aria-label="Next Slide">Next →</button>
+    <button class="nav-btn" id="nextBtn">Next →</button>
   </nav>
 
   <script src="gods.js"></script>
